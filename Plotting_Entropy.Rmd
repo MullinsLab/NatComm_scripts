@@ -1,0 +1,32 @@
+---
+title: "Plotting entropy"
+output: html_notebook
+---
+
+A notebook for plotting shannon entropy.
+
+```{r}
+library(tidyverse)
+library(readr)
+
+#read in merged tsv
+merged_tsv <- read_tsv("merged_columns.tsv") 
+
+#create position column 
+df <- mutate(merged_tsv, position = 1:length(merged_tsv$shanc...1), .before = 'shanc...1') %>%
+  rename_all(~ str_replace(., "shanc...", "sample_")) %>% #rename columns to sample_n
+  rename_all(~ str_replace(., "shan", "sample_")) %>%
+  pivot_longer(cols = starts_with("sample"), names_to = "sample", values_to = "entropy") #arranges data into single column for for plotting
+
+ggplot(df, aes(x=position, y=entropy))+
+  geom_point() +
+  #geom_smooth(level=.99)+
+  ylab("Shannon Entropy") +
+  xlab("Alignment Position") +
+  ggtitle("Shannon Entropy") +
+  coord_cartesian(ylim = c(0,1.25))
+  
+
+```
+
+
